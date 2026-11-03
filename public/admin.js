@@ -8,7 +8,7 @@ async function refresh(){
 }
 async function check(){try{const s=await api("/api/admin/me");if(s.authenticated){$("#loginBox").hidden=true;$("#dashboard").hidden=false;await refresh()}}catch{}}
 $("#loginForm").addEventListener("submit",async e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.currentTarget));try{await api("/api/admin/login",{method:"POST",body:JSON.stringify(f)});$("#loginStatus").textContent="Signed in.";await check()}catch(err){$("#loginStatus").textContent=err.message}});
-$("#projectForm").addEventListener("submit",async e=>{e.preventDefault();try{await api("/api/admin/projects",{method:"POST",body:JSON.stringify(Object.fromEntries(new FormData(e.currentTarget)))});e.currentTarget.reset();$("#projectStatus").textContent="Project added.";await refresh()}catch(err){$("#projectStatus").textContent=err.message}});
+$("#projectForm").addEventListener("submit",async e=>{e.preventDefault();try{await api("/api/admin/projects",{method:"POST",body:JSON.stringify(Object.fromEntries(new FormData(e.currentTarget)))});$("#projectForm").reset();$("#projectStatus").textContent="Project added.";await refresh()}catch(err){$("#projectStatus").textContent=err.message}});
 $("#dashboard").addEventListener("click",async e=>{const p=e.target.dataset.delProject,m=e.target.dataset.delMessage;try{if(p)await api("/api/admin/projects/"+p,{method:"DELETE"});if(m)await api("/api/admin/messages/"+m,{method:"DELETE"});if(p||m)await refresh()}catch(err){alert(err.message)}});
 $("#logout").addEventListener("click",async()=>{await api("/api/admin/logout",{method:"POST"});location.reload()});
 check();
