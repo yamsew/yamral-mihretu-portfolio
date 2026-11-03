@@ -30,15 +30,34 @@ function escapeHtml(value) {
 }
 $("#contactForm").addEventListener("submit", async e => {
   e.preventDefault();
-  const form = new FormData(e.currentTarget);
+
+  const formElement = e.currentTarget;
+  const form = new FormData(formElement);
   const status = $("#formStatus");
+
   status.textContent = "Sending…";
+
   try {
-    const r = await fetch("/api/messages", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.fromEntries(form))});
+    const r = await fetch("/api/messages", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(Object.fromEntries(form))
+    });
+
     const data = await r.json();
+
     if (!r.ok) throw new Error(data.error || "Could not send message.");
-    status.textContent = language === "am" ? "መልዕክትህ ተቀብሏል።" : "Your message has been received.";
-    e.currentTarget.reset();
+
+    status.textContent = language === "am"
+      ? "መልዕክትህ ተቀብሏል።"
+      : "Your message has been received.";
+
+    formElement.reset();
+
+  } catch (err) {
+    status.textContent = err.message;
+  }
+});
   } catch (err) { status.textContent = err.message; }
 });
 loadProjects();
